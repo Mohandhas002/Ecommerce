@@ -1,7 +1,6 @@
 package com.ecommerceproject.security;
 
 import java.util.Arrays;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,29 +15,28 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-
-
-//import static org.springframework.security.config.Customizer.withDefaults;
-
 @Configuration
 public class SecurityConfig {
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors() // Enable CORS settings
+                .and()
+                .csrf().disable() // Disable CSRF for testing; re-enable and configure for production
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/users/register", "/users/login").permitAll()  // Public registration and login endpoints
                         .requestMatchers("/admin/**").hasRole("ADMIN")                   // Admin-only endpoints
-                        .anyRequest().authenticated())                                   // All other requests require authentication
-                .formLogin(login -> login.disable()) // Permit access to the login page
-                .httpBasic(basic -> basic.disable());
-        http.addFilterBefore(new JwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+                        .anyRequest().authenticated())
+                .addFilterBefore(new JwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        
+        System.out.println("Request received");
         return http.build();
     }
 
     // In-memory user details service for demo purposes
     @Bean
-    UserDetailsService userDetailsService() {
+    public UserDetailsService userDetailsService() {
         var user = User.withUsername("user")
                 .password(passwordEncoder().encode("password"))
                 .roles("USER")
@@ -53,12 +51,12 @@ public class SecurityConfig {
     }
 
     @Bean
-    PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // Add the appropriate origin
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
@@ -67,8 +65,6 @@ public class SecurityConfig {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-
         return source;
     }
-
 }

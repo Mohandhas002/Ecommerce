@@ -33,8 +33,14 @@ public class UserServiceImp implements UserService {
     public String loginUser(User user) {
         // Authenticate the user
         User dbUser = userRepository.findByUsername(user.getUsername());
-        if (dbUser != null && new BCryptPasswordEncoder().matches(user.getPassword(), dbUser.getPassword())) {
+        System.out.println("User "+dbUser);
+
+        
+        
+        if (dbUser != null &&dbUser.getPassword().equals(user.getPassword())) {
             // Generate JWT token for user
+        	System.out.println("enter");
+        	System.out.println("username"+dbUser.getUsername());
             return jwtUtil.generateToken(dbUser.getUsername(), dbUser.getRole());
         }
         return null;  // Invalid credentials

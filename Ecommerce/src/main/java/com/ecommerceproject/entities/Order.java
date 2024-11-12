@@ -81,8 +81,5 @@ public class Order {
 		return "Order [id=" + id + ", userid=" + userid + ", total_amount=" + total_amount + ", Currentstatus="
 				+ Currentstatus + "]";
 	}
-
-	
-
     
 }

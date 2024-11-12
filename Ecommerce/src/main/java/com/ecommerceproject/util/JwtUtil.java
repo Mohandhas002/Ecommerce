@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtUtil {
 
-    private String secretKey = "mySecretKey";  // Use a stronger key in production
+    private String secretKey = "mySecretKeydfsdofodjfjsdpjfpsdjfpjsdfpjsdpfjpsdjfpsjdfpjsdpfjpsdfjpsdjfpsjdfpjsdpfjsdpfjpsdjfpsdjfpsjdfpsjdpjsdfpjsdpf";  // Use a stronger key in production
 
     @SuppressWarnings("deprecation")
 	public String generateToken(String username, String role) {
@@ -21,7 +21,7 @@ public class JwtUtil {
             .signWith(SignatureAlgorithm.HS256, secretKey)
             .compact();
     }
-
+    
     public String extractUsername(String token) {
         return parseClaims(token).getSubject();
     }
